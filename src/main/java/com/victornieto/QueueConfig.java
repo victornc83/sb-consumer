@@ -1,6 +1,13 @@
 package com.victornieto;
 
-import org.springframework.amqp.core.Queue;
+import com.rabbitmq.client.ConnectionFactory;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,14 +17,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QueueConfig {
 
+    public static final String queueName = "mensajesCola" ;
+    public static final String exchangeName = "mensajesExchange" ;
+    public static final String routingKey = "mensajesKey" ;
+
     @Bean
-    public Queue hello() {
-        return new Queue("hello") ;
+    public Queue queue() {
+        return new Queue(queueName, true) ;
     }
 
     @Bean
-    public Consumer consumer() {
-        return new Consumer() ;
+    public TopicExchange topicExc() {
+        return new TopicExchange(exchangeName, true, false) ;
     }
 
+    @Bean
+    public Binding declareBinding() {
+        return BindingBuilder.bind(queue()).to(topicExc()).with(routingKey) ;
+    }
 }

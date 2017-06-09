@@ -1,16 +1,21 @@
 package com.victornieto;
 
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger ;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by victor.nieto.castan on 08/06/2017.
  */
-@RabbitListener(queues = "hello")
+@Service
 public class Consumer {
 
-    @RabbitHandler
-    public void cosume(String in) {
-        System.out.println(" [x] Received '" + in + "'");
+    private static final Logger log = LoggerFactory.getLogger(Consumer.class);
+
+    @RabbitListener(queues = QueueConfig.queueName)
+    public void leeMensaje(final Mensaje mensaje) {
+        log.info("Recibido mensaje: Texto={} - Prioridad={}", mensaje.getTexto(),mensaje.getPrioridad()) ;
     }
+
 }
